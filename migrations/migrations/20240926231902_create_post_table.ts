@@ -15,6 +15,12 @@ export async function up(knex: Knex): Promise<void> {
       .dateTime('createdAt')
       .notNullable()
       .defaultTo(knex.raw('CURRENT_TIMESTAMP'));
+    table
+      .integer('workspaceId')
+      .unsigned()
+      .references('id')
+      .inTable('workspace')
+      .onDelete('CASCADE');
   });
 }
 
