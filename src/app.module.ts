@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { KnexModule } from 'nestjs-knex';
+import { PostModule } from './post/post.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 import Config from './config';
 
 @Module({
@@ -10,8 +11,10 @@ import Config from './config';
       config: Config.database,
     }),
     UserModule,
+    PostModule,
+    WorkspaceModule,
   ],
-  controllers: [UserController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}
