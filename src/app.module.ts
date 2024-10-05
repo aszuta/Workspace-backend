@@ -3,6 +3,7 @@ import { UserModule } from './user/user.module';
 import { KnexModule } from 'nestjs-knex';
 import { PostModule } from './post/post.module';
 import { WorkspaceModule } from './workspace/workspace.module';
+import { AuthModule } from './auth/auth.module';
 import Config from './config';
 
 @Module({
@@ -13,6 +14,7 @@ import Config from './config';
     UserModule,
     PostModule,
     WorkspaceModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
