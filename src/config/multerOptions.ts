@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 
 export const multerOptions: MulterOptions = {
   limits: {
-    fileSize: +process.env.MAX_FILE_SIZE,
+    fileSize: +process.env.MAX_FILE_SIZE || 5242880,
   },
   fileFilter: (
     req: Request,
