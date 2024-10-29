@@ -24,4 +24,8 @@ export class UserService {
   findOne(email: string): Promise<User> {
     return this.userRepository.findOne(email);
   }
+
+  findOneById(id: number): Promise<Record<string, any>> {
+    return this.userRepository.findById(id);
+  }
 }
