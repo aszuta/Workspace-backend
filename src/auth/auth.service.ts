@@ -44,4 +44,12 @@ export class AuthService {
       refreshToken,
     };
   }
+
+  async findByRefreshToken(hash: string): Promise<Record<string, any>> {
+    return await this.authRepository.findByRefreshToken(hash);
+  }
+
+  async logout(id: number): Promise<void> {
+    await this.authRepository.removeRefreshToken(id);
+  }
 }

@@ -1,12 +1,26 @@
-import { Body, Controller, Post, UseGuards, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Res,
+  Get,
+  Req,
+  NotFoundException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { UserLoginDto } from 'src/user/dto/user.dto';
 import { Response } from 'express';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -15,13 +29,41 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
     const data = await this.authService.login(userLoginDto);
-    console.log(data);
-    console.log(userLoginDto);
     res.cookie('authcookie', data.accessToken, {
       expires: new Date(Date.now() + 5 * 60 * 1000),
     });
-    res.cookie('refreshToken', data.accessToken, {
+    res.cookie('refreshtoken', data.refreshToken, {
       httpOnly: true,
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async getCurrentUser(@Req() req): Promise<Record<string, any>> {
+    const user = await this.userService.findOneById(req.user.id);
+    if (!user) throw new NotFoundException();
+    return user;
+  }
+
+  @Get('refresh')
+  async refresh(@Req() req, @Res({ passthrough: true }) res): Promise<void> {
+    const cookie = req.cookies['refreshtoken'];
+    const user = await this.authService.findByRefreshToken(cookie);
+    const accessToken = this.authService.setAccessToken(user.id);
+    const refreshToken = await this.authService.setRefreshToken(user.id);
+    res.cookie('authcookie', accessToken, {
+      expires: new Date(Date.now() + 5 * 60 * 1000),
+    });
+    res.cookie('refreshtoken', refreshToken, {
+      httpOnly: true,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Req() req, @Res({ passthrough: true }) res): Promise<void> {
+    await this.authService.logout(req.user.id);
+    res.clearCookie('authcookie');
+    res.clearCookie('refreshtoken');
   }
 }
