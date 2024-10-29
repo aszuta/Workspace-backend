@@ -12,4 +12,12 @@ export class PostDto {
   @IsNotEmpty()
   @IsNumber()
   createdBy: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  workspace_id: number;
+
+  @IsNotEmpty()
+  @IsString()
+  email: string;
 }
