@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 import { WorkspaceDto } from './dto/workspace.dto';
+import { UserDto } from 'src/user/dto/user.dto';
 
 @Controller('workspace')
 export class WorkspaceController {
@@ -20,9 +21,26 @@ export class WorkspaceController {
     await this.workspaceService.createWorkspace(workspaceDto);
   }
 
-  @Get()
-  async getWorkspaces(): Promise<Record<string, any>> {
-    return await this.workspaceService.getWorkspaces();
+  @Post(':workspaceId/assign')
+  async assignUserToWorkspace(
+    @Param('workspaceId') workspaceId: string,
+    @Body() userDto: UserDto,
+  ): Promise<void> {
+    await this.workspaceService.assignToWorkspace(workspaceId, userDto.email);
+  }
+
+  @Get(':name')
+  async getWorkspace(
+    @Param('name') name: string,
+  ): Promise<Record<string, any>> {
+    return await this.workspaceService.getWorkspace(name);
+  }
+
+  @Get('user/:email')
+  async getWorkspaces(
+    @Param('email') email: string,
+  ): Promise<Record<string, any>> {
+    return await this.workspaceService.getWorkspaces(email);
   }
 
   @Patch(':id')
