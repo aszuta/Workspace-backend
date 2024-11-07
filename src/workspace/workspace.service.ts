@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceRepository } from './workspace.repository';
 import { WorkspaceDto } from './dto/workspace.dto';
 import { Workspace } from './workspace.interface';
-import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class WorkspaceService {
-  constructor(
-    private readonly workspaceRepository: WorkspaceRepository,
-    private readonly userRepository: UserRepository,
-  ) {}
+  constructor(private readonly workspaceRepository: WorkspaceRepository) {}
 
   async createWorkspace(workspaceDto: WorkspaceDto): Promise<void> {
     const { email, ...rest } = workspaceDto;
@@ -37,11 +33,19 @@ export class WorkspaceService {
     return await this.workspaceRepository.getAll(email);
   }
 
+  async getUsers(id: number): Promise<any> {
+    return await this.workspaceRepository.getUsers(id);
+  }
+
   async updateWorkspace(id: number, data: object): Promise<void> {
     await this.workspaceRepository.update(id, data);
   }
 
   async removeWorkspace(id: number): Promise<void> {
     await this.workspaceRepository.remove(id);
+  }
+
+  async removeUser(email: string, id: number): Promise<void> {
+    await this.workspaceRepository.removeUser(email, id);
   }
 }

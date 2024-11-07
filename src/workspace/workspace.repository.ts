@@ -33,6 +33,15 @@ export class WorkspaceRepository {
       .select('workspace.*');
   }
 
+  async getUsers(id: number): Promise<any> {
+    return await this.knex
+      .table('workspace_members')
+      .join('user', 'workspace_members.user_email', 'user.email')
+      .where('workspace_members.workspace_id', id)
+      .select('id', 'name', 'email')
+      .distinct();
+  }
+
   async update(id: number, data: object): Promise<void> {
     await this.knex
       .table<Workspace>('workspace')
@@ -42,5 +51,13 @@ export class WorkspaceRepository {
 
   async remove(id: number): Promise<void> {
     await this.knex.table('workspace').del().where('owner', id);
+  }
+
+  async removeUser(email: string, id: number): Promise<void> {
+    await this.knex
+      .table('workspace_members')
+      .del()
+      .where('user_email', email)
+      .andWhere('workspace_id', id);
   }
 }

@@ -50,11 +50,19 @@ export class PostService {
     return await this.postRepository.get(email, id);
   }
 
+  async getUsers(id: number): Promise<any> {
+    return await this.postRepository.getUsers(id);
+  }
+
   async updatePost(id: number, data: object): Promise<void> {
     await this.postRepository.update(id, data);
   }
 
   async deletePost(id: number): Promise<void> {
     await this.postRepository.delete(id);
+  }
+
+  async removeUser(email: string, id: number): Promise<void> {
+    await this.postRepository.removeUser(email, id);
   }
 }

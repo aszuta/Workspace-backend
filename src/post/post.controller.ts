@@ -45,6 +45,11 @@ export class PostController {
     return await this.postService.getPosts(email, id);
   }
 
+  @Get(':id')
+  async getUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
+    return await this.postService.getUsers(id);
+  }
+
   @Patch(':id')
   async updatePost(
     @Param('id', ParseIntPipe) id,
@@ -56,5 +61,13 @@ export class PostController {
   @Delete(':id')
   deletePost(@Param('id', ParseIntPipe) id): Promise<void> {
     return this.postService.deletePost(id);
+  }
+
+  @Delete(':id/:email')
+  removeUser(
+    @Param('id', ParseIntPipe) id,
+    @Param('email') email: string,
+  ): Promise<void> {
+    return this.postService.removeUser(email, id);
   }
 }

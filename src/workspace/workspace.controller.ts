@@ -43,6 +43,11 @@ export class WorkspaceController {
     return await this.workspaceService.getWorkspaces(email);
   }
 
+  @Get('users/:id')
+  async getUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
+    return await this.workspaceService.getUsers(id);
+  }
+
   @Patch(':id')
   async uploadWorkspace(
     @Param('id', ParseIntPipe) id,
@@ -54,5 +59,13 @@ export class WorkspaceController {
   @Delete(':id')
   removeWorkspace(@Param('id', ParseIntPipe) id): Promise<void> {
     return this.workspaceService.removeWorkspace(id);
+  }
+
+  @Delete(':id/:email')
+  removeUser(
+    @Param('id', ParseIntPipe) id,
+    @Param('email') email: string,
+  ): Promise<void> {
+    return this.workspaceService.removeUser(email, id);
   }
 }
