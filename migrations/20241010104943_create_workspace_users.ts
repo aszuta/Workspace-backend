@@ -1,23 +1,23 @@
 import type { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTable('workspace_members', function (table) {
+  return knex.schema.createTable('workspace_users', function (table) {
     table
-      .integer('workspace_id')
+      .integer('workspaceId')
       .unsigned()
       .references('id')
       .inTable('workspace')
       .onDelete('CASCADE');
     table
-      .string('user_email')
-      .notNullable()
-      .references('email')
+      .integer('userId')
+      .unsigned()
+      .references('id')
       .inTable('user')
       .onDelete('CASCADE');
-    table.primary(['workspace_id', 'user_email']);
+    table.primary(['workspaceId', 'userId']);
   });
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTable('workspace_members');
+  return knex.schema.dropTable('workspace_users');
 }

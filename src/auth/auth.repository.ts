@@ -9,18 +9,18 @@ export class AuthRepository {
   async setRefreshToken(refreshToken: string, id: number): Promise<void> {
     await this.knex
       .table<User>('user')
-      .update({ refresh_token: refreshToken })
+      .update({ refreshToken: refreshToken })
       .where('id', id);
   }
 
   findByRefreshToken(hash: string): Promise<Record<string, any>> {
     return this.knex('user')
       .select('id', 'name', 'email')
-      .where('refresh_token', hash)
+      .where('refreshToken', hash)
       .first();
   }
 
   async removeRefreshToken(id: number): Promise<void> {
-    await this.knex('user').update({ refresh_token: null }).where('id', id);
+    await this.knex('user').update({ refreshToken: null }).where('id', id);
   }
 }

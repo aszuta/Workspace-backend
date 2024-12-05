@@ -15,7 +15,7 @@ export class PostDto {
 
   @IsNotEmpty()
   @IsNumber()
-  workspace_id: number;
+  workspaceId: number;
 
   @IsNotEmpty()
   @IsString()

@@ -3,18 +3,18 @@ import type { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('post_users', function (table) {
     table
-      .integer('post_id')
+      .integer('postId')
       .unsigned()
       .references('id')
       .inTable('post')
       .onDelete('CASCADE');
     table
-      .string('user_email')
-      .notNullable()
-      .references('email')
+      .integer('userId')
+      .unsigned()
+      .references('id')
       .inTable('user')
       .onDelete('CASCADE');
-    table.primary(['post_id', 'user_email']);
+    table.primary(['postId', 'userId']);
   });
 }
 

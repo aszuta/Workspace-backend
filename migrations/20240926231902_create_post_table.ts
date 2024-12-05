@@ -16,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .defaultTo(knex.raw('CURRENT_TIMESTAMP'));
     table
-      .integer('workspace_id')
+      .integer('workspaceId')
       .unsigned()
       .references('id')
       .inTable('workspace')

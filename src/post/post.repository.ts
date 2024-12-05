@@ -21,18 +21,18 @@ export class PostRepository {
   async get(email: string, id: number): Promise<Post[]> {
     return await this.knex
       .table('post')
-      .join('post_users', 'post.id', 'post_users.post_id')
-      .join('user', 'post_users.user_email', 'user.email')
-      .where('post_users.user_email', email)
-      .andWhere('post.workspace_id', id)
+      .join('post_users', 'post.id', 'post_users.postId')
+      .join('user', 'post_users.userEmail', 'user.email')
+      .where('post_users.userEmail', email)
+      .andWhere('post.workspaceId', id)
       .select('post.*', 'post_users.*', 'user.name');
   }
 
   async getUsers(id: number): Promise<any> {
     return await this.knex
       .table('post_users')
-      .join('user', 'post_users.user_email', 'user.email')
-      .where('post_users.post_id', id)
+      .join('user', 'post_users.userEmail', 'user.email')
+      .where('post_users.postId', id)
       .select('id', 'name', 'email')
       .distinct();
   }
@@ -49,7 +49,7 @@ export class PostRepository {
     await this.knex
       .table('post_users')
       .del()
-      .where('user_email', email)
-      .andWhere('post_id', id);
+      .where('userEmail', email)
+      .andWhere('postId', id);
   }
 }

@@ -2,25 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceRepository } from './workspace.repository';
 import { WorkspaceDto } from './dto/workspace.dto';
 import { Workspace } from './workspace.interface';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class WorkspaceService {
-  constructor(private readonly workspaceRepository: WorkspaceRepository) {}
+  constructor(
+    private readonly workspaceRepository: WorkspaceRepository,
+    private readonly userService: UserService,
+  ) {}
 
   async createWorkspace(workspaceDto: WorkspaceDto): Promise<void> {
     const { email, ...rest } = workspaceDto;
     const result = await this.workspaceRepository.create(rest);
     const data = {
-      workspace_id: result,
-      user_email: email,
+      workspaceId: result,
+      userEmail: email,
     };
     await this.workspaceRepository.assingToWorkspace(data);
   }
 
   async assignToWorkspace(workspaceId: string, email: string): Promise<void> {
+    const user = await this.userService.findOne(email);
     const data = {
-      workspace_id: workspaceId,
-      user_email: email,
+      workspaceId: workspaceId,
+      userId: user.id,
     };
     await this.workspaceRepository.assingToWorkspace(data);
   }

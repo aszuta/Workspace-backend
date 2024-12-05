@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('filepath').notNullable();
     table.string('mimetype').notNullable();
     table
-      .integer('post_id')
+      .integer('postId')
       .unsigned()
       .references('id')
       .inTable('post')

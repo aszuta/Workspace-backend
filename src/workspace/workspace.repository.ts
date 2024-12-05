@@ -11,7 +11,7 @@ export class WorkspaceRepository {
   }
 
   async assingToWorkspace(data: object): Promise<void> {
-    await this.knex('workspace_members').insert(data);
+    await this.knex('workspace_users').insert(data);
   }
 
   async getOne(name: string): Promise<Workspace[]> {
@@ -24,20 +24,16 @@ export class WorkspaceRepository {
   async getAll(email: string): Promise<any> {
     return await this.knex
       .table('workspace')
-      .join(
-        'workspace_members',
-        'workspace.id',
-        'workspace_members.workspace_id',
-      )
-      .where('workspace_members.user_email', email)
+      .join('workspace_users', 'workspace.id', 'workspace_users.workspaceId')
+      .where('workspace_users.userEmail', email)
       .select('workspace.*');
   }
 
   async getUsers(id: number): Promise<any> {
     return await this.knex
-      .table('workspace_members')
-      .join('user', 'workspace_members.user_email', 'user.email')
-      .where('workspace_members.workspace_id', id)
+      .table('workspace_users')
+      .join('user', 'workspace_users.userEmail', 'user.email')
+      .where('workspace_users.workspaceId', id)
       .select('id', 'name', 'email')
       .distinct();
   }
@@ -55,9 +51,9 @@ export class WorkspaceRepository {
 
   async removeUser(email: string, id: number): Promise<void> {
     await this.knex
-      .table('workspace_members')
+      .table('workspace_users')
       .del()
-      .where('user_email', email)
-      .andWhere('workspace_id', id);
+      .where('userEmail', email)
+      .andWhere('workspaceId', id);
   }
 }

@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import { PostDto } from './dto/post.dto';
 import { Post } from './post.interface';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly userService: UserService,
+  ) {}
 
   async createPost(postDto: PostDto, file?: any): Promise<void> {
     let path: string | undefined;
@@ -14,13 +18,13 @@ export class PostService {
       title: postDto.title,
       description: postDto.description,
       createdBy: postDto.createdBy,
-      workspace_id: postDto.workspace_id,
+      workspaceId: postDto.workspaceId,
     };
 
     const postId = await this.postRepository.create(postData);
     const assingData = {
-      post_id: postId,
-      user_email: postDto.email,
+      postId: postId,
+      userEmail: postDto.email,
     };
 
     await this.postRepository.assignToPost(assingData);
@@ -31,7 +35,7 @@ export class PostService {
         filename: file.filename,
         filepath: path,
         mimetype: file.mimetype,
-        post_id: postId,
+        postId: postId,
       };
 
       await this.postRepository.addPicture(fileData);
@@ -39,9 +43,10 @@ export class PostService {
   }
 
   async assignToPost(postId: number, email: string): Promise<void> {
+    const user = await this.userService.findOne(email);
     const data = {
-      post_id: postId,
-      user_email: email,
+      postId: postId,
+      userId: user.id,
     };
     await this.postRepository.assignToPost(data);
   }
