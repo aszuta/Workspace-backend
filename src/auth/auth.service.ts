@@ -3,8 +3,8 @@ import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from 'src/user/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { v4 as uuidv4 } from 'uuid';
 import { AuthRepository } from './auth.repository';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async setRefreshToken(id: number): Promise<string> {
-    const refreshToken = uuidv4();
+    const refreshToken = randomBytes(64).toString('hex');
     await this.authRepository.setRefreshToken(refreshToken, id);
     return refreshToken;
   }

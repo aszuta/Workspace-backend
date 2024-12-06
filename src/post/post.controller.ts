@@ -13,7 +13,7 @@ import {
 import { PostService } from './post.service';
 import { PostDto } from './dto/post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from 'src/config/multerOptions';
+import { multerOptions } from 'src/post/create-post-multer-options';
 import { UserDto } from 'src/user/dto/user.dto';
 
 @Controller('post')

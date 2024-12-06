@@ -13,7 +13,7 @@ import { JwtStategy } from './jwt.strategy';
     forwardRef(() => UserModule),
     PassportModule,
     JwtModule.register({
-      secret: `${process.env.JWT_SECRET}`,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '300s' },
     }),
   ],
