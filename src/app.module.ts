@@ -4,12 +4,20 @@ import { KnexModule } from 'nestjs-knex';
 import { PostModule } from './post/post.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { AuthModule } from './auth/auth.module';
-import Config from './config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
-    KnexModule.forRoot({
-      config: Config.database,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    KnexModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        config: configService.get('database'),
+      }),
+      inject: [ConfigService],
     }),
     UserModule,
     PostModule,
