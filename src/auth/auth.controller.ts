@@ -6,7 +6,6 @@ import {
   Res,
   Get,
   Req,
-  NotFoundException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -35,14 +34,6 @@ export class AuthController {
     res.cookie('refreshtoken', data.refreshToken, {
       httpOnly: true,
     });
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  async getCurrentUser(@Req() req): Promise<Record<string, any>> {
-    const user = await this.userService.findOneById(req.user.id);
-    if (!user) throw new NotFoundException();
-    return user;
   }
 
   @Get('refresh')

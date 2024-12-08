@@ -5,6 +5,7 @@ import { PostModule } from './post/post.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HandshakeController } from './handshake/handshake.controller';
 import configuration from './config/configuration';
 
 @Module({
@@ -24,7 +25,7 @@ import configuration from './config/configuration';
     WorkspaceModule,
     AuthModule,
   ],
-  controllers: [],
+  controllers: [HandshakeController],
   providers: [],
 })
 export class AppModule {}

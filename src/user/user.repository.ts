@@ -22,6 +22,6 @@ export class UserRepository {
   }
 
   findById(id: number): Promise<Record<string, any>> {
-    return this.knex('user').select('id', 'name', 'email').where('id', id);
+    return this.knex('user').where('id', id).first();
   }
 }

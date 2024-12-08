@@ -23,8 +23,7 @@ export class AuthService {
     const user = await this.userService.findOne(email);
     const userPassword = await this.authRepository.findById(user.id);
 
-    if (user && bcrypt.compare(userPassword, password)) {
-      delete user.password;
+    if (user && bcrypt.compare(userPassword.password, password)) {
       return user;
     }
 
