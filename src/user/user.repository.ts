@@ -7,7 +7,7 @@ export class UserRepository {
   constructor(@InjectKnex() private knex: Knex) {}
 
   async create(data: object): Promise<void> {
-    await this.knex<User>('user').insert(data);
+    return await this.knex<User>('user').insert(data);
   }
 
   findOne(email: string): Promise<User> {

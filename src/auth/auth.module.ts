@@ -18,6 +18,7 @@ import { JwtStategy } from './jwt.strategy';
     }),
   ],
   providers: [AuthService, LocalStrategy, AuthRepository, JwtStategy],
+  exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}

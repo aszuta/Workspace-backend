@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from 'src/user/dto/user.dto';
@@ -9,15 +9,21 @@ import { randomBytes } from 'crypto';
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
     private readonly authRepository: AuthRepository,
   ) {}
 
+  async createAuthCredentials(id: number, password: string): Promise<void> {
+    await this.authRepository.create(id, password);
+  }
+
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findOne(email);
+    const userPassword = await this.authRepository.findById(user.id);
 
-    if (user && bcrypt.compare(user.password, password)) {
+    if (user && bcrypt.compare(userPassword, password)) {
       delete user.password;
       return user;
     }
