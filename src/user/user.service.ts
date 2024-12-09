@@ -1,9 +1,9 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.interface';
 import { AuthService } from 'src/auth/auth.service';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -23,7 +23,13 @@ export class UserService {
     };
 
     const user = await this.userRepository.create(data);
-    await this.authService.createAuthCredentials(user[0], hash);
+
+    const authCredentials = {
+      id: user[0],
+      password: hash,
+    };
+
+    await this.authService.createAuthCredentials(authCredentials);
   }
 
   findOne(email: string): Promise<User> {

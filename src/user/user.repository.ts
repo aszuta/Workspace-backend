@@ -6,8 +6,11 @@ import { User } from './user.interface';
 export class UserRepository {
   constructor(@InjectKnex() private knex: Knex) {}
 
-  async create(data: object): Promise<void> {
-    return await this.knex<User>('user').insert(data);
+  async create(user: User): Promise<void> {
+    return await this.knex<User>('user').insert({
+      name: user.name,
+      email: user.email,
+    });
   }
 
   findOne(email: string): Promise<User> {

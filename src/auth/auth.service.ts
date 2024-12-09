@@ -5,6 +5,7 @@ import { UserLoginDto } from 'src/user/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthRepository } from './auth.repository';
 import { randomBytes } from 'crypto';
+import { Auth } from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +16,8 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
   ) {}
 
-  async createAuthCredentials(id: number, password: string): Promise<void> {
-    await this.authRepository.create(id, password);
+  async createAuthCredentials(auth: Auth): Promise<void> {
+    await this.authRepository.create(auth);
   }
 
   async validateUser(email: string, password: string): Promise<any> {
