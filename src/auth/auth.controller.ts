@@ -4,22 +4,18 @@ import {
   Post,
   UseGuards,
   Res,
-  Get,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { UserLoginDto } from 'src/user/dto/user.dto';
 import { Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -36,10 +32,13 @@ export class AuthController {
     });
   }
 
-  @Get('refresh')
+  @Post('refresh')
   async refresh(@Req() req, @Res({ passthrough: true }) res): Promise<void> {
     const cookie = req.cookies['refreshtoken'];
     const user = await this.authService.findByRefreshToken(cookie);
+
+    if (!user) throw new UnauthorizedException('User not found');
+
     const accessToken = this.authService.setAccessToken(user.id);
     const refreshToken = await this.authService.setRefreshToken(user.id);
     res.cookie('authcookie', accessToken, {
