@@ -8,8 +8,4 @@ export class WorkspaceDto {
   @IsNotEmpty()
   @IsNumber()
   owner: number;
-
-  @IsNotEmpty()
-  @IsString()
-  email: string;
 }

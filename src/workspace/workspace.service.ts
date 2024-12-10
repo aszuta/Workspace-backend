@@ -12,11 +12,10 @@ export class WorkspaceService {
   ) {}
 
   async createWorkspace(workspaceDto: WorkspaceDto): Promise<void> {
-    const { email, ...rest } = workspaceDto;
-    const result = await this.workspaceRepository.create(rest);
+    const result = await this.workspaceRepository.create(workspaceDto);
     const data = {
-      workspaceId: result,
-      userEmail: email,
+      workspaceId: result[0],
+      userId: workspaceDto.owner,
     };
     await this.workspaceRepository.assingToWorkspace(data);
   }
@@ -35,7 +34,12 @@ export class WorkspaceService {
   }
 
   async getWorkspaces(email: string): Promise<Workspace[]> {
-    return await this.workspaceRepository.getAll(email);
+    const user = await this.userService.findOne(email);
+    return await this.workspaceRepository.getAll(user.id);
+  }
+
+  async getUser(workspaceId: number, userId: number): Promise<boolean> {
+    return await this.workspaceRepository.getUser(workspaceId, userId);
   }
 
   async getUsers(id: number): Promise<any> {
@@ -51,6 +55,7 @@ export class WorkspaceService {
   }
 
   async removeUser(email: string, id: number): Promise<void> {
-    await this.workspaceRepository.removeUser(email, id);
+    const user = await this.userService.findOne(email);
+    await this.workspaceRepository.removeUser(user.id, id);
   }
 }
