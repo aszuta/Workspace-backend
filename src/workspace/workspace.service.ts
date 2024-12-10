@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { WorkspaceRepository } from './workspace.repository';
-import { WorkspaceDto } from './dto/workspace.dto';
+import { WorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './workspace.interface';
 import { UserService } from 'src/user/user.service';
 

@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
-import { UserLoginDto } from 'src/user/dto/user.dto';
+import { UserLoginDto } from 'src/user/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthRepository } from './auth.repository';
 import { randomBytes } from 'crypto';

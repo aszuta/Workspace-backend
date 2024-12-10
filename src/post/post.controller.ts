@@ -13,10 +13,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { PostDto } from './dto/post.dto';
+import { PostDto } from './dto/create-post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/post/create-post-multer-options';
-import { UserDto } from 'src/user/dto/user.dto';
+import { UserDto } from 'src/user/dto/create-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('post')

@@ -9,8 +9,8 @@ import {
   Patch,
 } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
-import { WorkspaceDto } from './dto/workspace.dto';
-import { UserDto } from 'src/user/dto/user.dto';
+import { WorkspaceDto } from './dto/create-workspace.dto';
+import { UserDto } from 'src/user/dto/create-user.dto';
 
 @Controller('workspace')
 export class WorkspaceController {
