@@ -18,7 +18,7 @@ export class PostRepository {
     await this.knex.table('post_picture').insert(data);
   }
 
-  async get(userId: number, id: number): Promise<Post[]> {
+  async find(userId: number, id: number): Promise<Post[]> {
     return await this.knex
       .table('post')
       .join('post_users', 'post.id', 'post_users.postId')
@@ -28,7 +28,7 @@ export class PostRepository {
       .select('post.*', 'post_users.*', 'user.name');
   }
 
-  async getPost(id: number, userId: number): Promise<boolean> {
+  async findPost(id: number, userId: number): Promise<boolean> {
     const result = await this.knex
       .table<Post>('post')
       .where('id', id)
@@ -37,7 +37,7 @@ export class PostRepository {
     return !!result;
   }
 
-  async getUsers(id: number): Promise<any> {
+  async findUsers(id: number): Promise<any> {
     return await this.knex
       .table('post_users')
       .join('user', 'post_users.userId', 'user.id')

@@ -20,7 +20,7 @@ export class PostService {
   ): Promise<void> {
     let path: string | undefined;
 
-    const isUser = await this.workspaceService.getUser(
+    const isUser = await this.workspaceService.findUser(
       postDto.workspaceId,
       userId,
     );
@@ -60,7 +60,7 @@ export class PostService {
     postId: number,
     email: string,
   ): Promise<void> {
-    const isUser = await this.postRepository.getUsers(postId);
+    const isUser = await this.postRepository.findUsers(postId);
 
     if (isUser.id !== userId) throw new NotFoundException();
 
@@ -72,12 +72,12 @@ export class PostService {
     await this.postRepository.assignToPost(data);
   }
 
-  async getPosts(userId: number, id: number): Promise<Post[]> {
-    return await this.postRepository.get(userId, id);
+  async findPosts(userId: number, id: number): Promise<Post[]> {
+    return await this.postRepository.find(userId, id);
   }
 
-  async getUsers(id: number): Promise<any> {
-    return await this.postRepository.getUsers(id);
+  async findUsers(id: number): Promise<any> {
+    return await this.postRepository.findUsers(id);
   }
 
   async updatePost(
@@ -85,7 +85,7 @@ export class PostService {
     id: number,
     postDto: PostDto,
   ): Promise<void> {
-    const isUser = await this.workspaceService.getUser(
+    const isUser = await this.workspaceService.findUser(
       postDto.workspaceId,
       userId,
     );
@@ -96,7 +96,7 @@ export class PostService {
   }
 
   async deletePost(id: number, userId: number): Promise<void> {
-    const post = await this.postRepository.getPost(id, userId);
+    const post = await this.postRepository.findPost(id, userId);
     if (post) await this.postRepository.delete(id);
   }
 

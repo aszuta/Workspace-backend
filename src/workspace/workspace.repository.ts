@@ -14,14 +14,14 @@ export class WorkspaceRepository {
     await this.knex('workspace_users').insert(data);
   }
 
-  async getOne(name: string): Promise<Workspace[]> {
+  async findOne(name: string): Promise<Workspace[]> {
     return await this.knex
       .table<Workspace>('workspace')
       .where('title', name)
       .first();
   }
 
-  async getAll(userId: number): Promise<any> {
+  async findAll(userId: number): Promise<any> {
     return await this.knex
       .table('workspace')
       .join('workspace_users', 'workspace.id', 'workspace_users.workspaceId')
@@ -29,7 +29,7 @@ export class WorkspaceRepository {
       .select('workspace.*');
   }
 
-  async getUser(workspaceId: number, userId: number): Promise<boolean> {
+  async findUser(workspaceId: number, userId: number): Promise<boolean> {
     const result = await this.knex
       .table('workspace_users')
       .where('workspaceId', workspaceId)
@@ -37,7 +37,7 @@ export class WorkspaceRepository {
     return !!result;
   }
 
-  async getUsers(id: number): Promise<any> {
+  async findUsers(id: number): Promise<any> {
     return await this.knex
       .table('workspace_users')
       .join('user', 'workspace_users.userId', 'user.id')
@@ -53,7 +53,7 @@ export class WorkspaceRepository {
       .where('owner', id);
   }
 
-  async remove(id: number): Promise<void> {
+  async delete(id: number): Promise<void> {
     await this.knex.table('workspace').del().where('owner', id);
   }
 

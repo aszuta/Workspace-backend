@@ -30,22 +30,22 @@ export class WorkspaceController {
   }
 
   @Get(':name')
-  async getWorkspace(
+  async findWorkspace(
     @Param('name') name: string,
   ): Promise<Record<string, any>> {
-    return await this.workspaceService.getWorkspace(name);
+    return await this.workspaceService.findWorkspace(name);
   }
 
   @Get('user/:email')
-  async getWorkspaces(
+  async findWorkspaces(
     @Param('email') email: string,
   ): Promise<Record<string, any>> {
-    return await this.workspaceService.getWorkspaces(email);
+    return await this.workspaceService.findWorkspaces(email);
   }
 
   @Get('users/:id')
-  async getUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
-    return await this.workspaceService.getUsers(id);
+  async findUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
+    return await this.workspaceService.findUsers(id);
   }
 
   @Patch(':id')
@@ -57,8 +57,8 @@ export class WorkspaceController {
   }
 
   @Delete(':id')
-  removeWorkspace(@Param('id', ParseIntPipe) id): Promise<void> {
-    return this.workspaceService.removeWorkspace(id);
+  deleteWorkspace(@Param('id', ParseIntPipe) id): Promise<void> {
+    return this.workspaceService.deleteWorkspace(id);
   }
 
   @Delete(':id/:email')

@@ -29,29 +29,29 @@ export class WorkspaceService {
     await this.workspaceRepository.assingToWorkspace(data);
   }
 
-  async getWorkspace(name: string): Promise<Workspace[]> {
-    return await this.workspaceRepository.getOne(name);
+  async findWorkspace(name: string): Promise<Workspace[]> {
+    return await this.workspaceRepository.findOne(name);
   }
 
-  async getWorkspaces(email: string): Promise<Workspace[]> {
+  async findWorkspaces(email: string): Promise<Workspace[]> {
     const user = await this.userService.findOne(email);
-    return await this.workspaceRepository.getAll(user.id);
+    return await this.workspaceRepository.findAll(user.id);
   }
 
-  async getUser(workspaceId: number, userId: number): Promise<boolean> {
-    return await this.workspaceRepository.getUser(workspaceId, userId);
+  async findUser(workspaceId: number, userId: number): Promise<boolean> {
+    return await this.workspaceRepository.findUser(workspaceId, userId);
   }
 
-  async getUsers(id: number): Promise<any> {
-    return await this.workspaceRepository.getUsers(id);
+  async findUsers(id: number): Promise<any> {
+    return await this.workspaceRepository.findUsers(id);
   }
 
   async updateWorkspace(id: number, data: object): Promise<void> {
     await this.workspaceRepository.update(id, data);
   }
 
-  async removeWorkspace(id: number): Promise<void> {
-    await this.workspaceRepository.remove(id);
+  async deleteWorkspace(id: number): Promise<void> {
+    await this.workspaceRepository.delete(id);
   }
 
   async removeUser(email: string, id: number): Promise<void> {

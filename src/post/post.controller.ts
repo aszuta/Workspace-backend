@@ -45,16 +45,16 @@ export class PostController {
   }
 
   @Get(':id/:userId')
-  async getPosts(
+  async findPosts(
     @Param('id', ParseIntPipe) id,
     @Param('userId') userId: number,
   ): Promise<Record<string, any>> {
-    return await this.postService.getPosts(userId, id);
+    return await this.postService.findPosts(userId, id);
   }
 
   @Get(':id')
-  async getUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
-    return await this.postService.getUsers(id);
+  async findUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
+    return await this.postService.findUsers(id);
   }
 
   @UseGuards(JwtAuthGuard)
