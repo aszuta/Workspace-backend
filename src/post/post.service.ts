@@ -1,18 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import { PostDto } from './dto/post.dto';
 import { Post } from './post.interface';
 import { UserService } from 'src/user/user.service';
+import { WorkspaceService } from 'src/workspace/workspace.service';
 
 @Injectable()
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
     private readonly userService: UserService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
-  async createPost(postDto: PostDto, file?: any): Promise<void> {
+  async createPost(
+    postDto: PostDto,
+    userId: number,
+    file?: any,
+  ): Promise<void> {
     let path: string | undefined;
+
+    const isUser = await this.workspaceService.getUser(
+      postDto.workspaceId,
+      userId,
+    );
+
+    if (!isUser) throw new NotFoundException();
 
     const postData = {
       title: postDto.title,
@@ -24,7 +37,7 @@ export class PostService {
     const postId = await this.postRepository.create(postData);
     const assingData = {
       postId: postId,
-      userEmail: postDto.email,
+      userId: userId,
     };
 
     await this.postRepository.assignToPost(assingData);
@@ -42,7 +55,15 @@ export class PostService {
     }
   }
 
-  async assignToPost(postId: number, email: string): Promise<void> {
+  async assignToPost(
+    userId: number,
+    postId: number,
+    email: string,
+  ): Promise<void> {
+    const isUser = await this.postRepository.getUsers(postId);
+
+    if (isUser.id !== userId) throw new NotFoundException();
+
     const user = await this.userService.findOne(email);
     const data = {
       postId: postId,
@@ -51,23 +72,36 @@ export class PostService {
     await this.postRepository.assignToPost(data);
   }
 
-  async getPosts(email: string, id: number): Promise<Post[]> {
-    return await this.postRepository.get(email, id);
+  async getPosts(userId: number, id: number): Promise<Post[]> {
+    return await this.postRepository.get(userId, id);
   }
 
   async getUsers(id: number): Promise<any> {
     return await this.postRepository.getUsers(id);
   }
 
-  async updatePost(id: number, data: object): Promise<void> {
-    await this.postRepository.update(id, data);
+  async updatePost(
+    userId: number,
+    id: number,
+    postDto: PostDto,
+  ): Promise<void> {
+    const isUser = await this.workspaceService.getUser(
+      postDto.workspaceId,
+      userId,
+    );
+
+    if (!isUser) throw new NotFoundException();
+
+    await this.postRepository.update(id, postDto);
   }
 
-  async deletePost(id: number): Promise<void> {
-    await this.postRepository.delete(id);
+  async deletePost(id: number, userId: number): Promise<void> {
+    const post = await this.postRepository.getPost(id, userId);
+    if (post) await this.postRepository.delete(id);
   }
 
   async removeUser(email: string, id: number): Promise<void> {
-    await this.postRepository.removeUser(email, id);
+    const user = await this.userService.findOne(email);
+    await this.postRepository.removeUser(user.id, id);
   }
 }

@@ -18,38 +18,47 @@ export class PostRepository {
     await this.knex.table('post_picture').insert(data);
   }
 
-  async get(email: string, id: number): Promise<Post[]> {
+  async get(userId: number, id: number): Promise<Post[]> {
     return await this.knex
       .table('post')
       .join('post_users', 'post.id', 'post_users.postId')
-      .join('user', 'post_users.userEmail', 'user.email')
-      .where('post_users.userEmail', email)
+      .join('user', 'post_users.userId', 'user.id')
+      .where('post_users.userId', userId)
       .andWhere('post.workspaceId', id)
       .select('post.*', 'post_users.*', 'user.name');
+  }
+
+  async getPost(id: number, userId: number): Promise<boolean> {
+    const result = await this.knex
+      .table<Post>('post')
+      .where('id', id)
+      .andWhere('createdBy', userId)
+      .first();
+    return !!result;
   }
 
   async getUsers(id: number): Promise<any> {
     return await this.knex
       .table('post_users')
-      .join('user', 'post_users.userEmail', 'user.email')
+      .join('user', 'post_users.userId', 'user.id')
       .where('post_users.postId', id)
       .select('id', 'name', 'email')
       .distinct();
   }
 
   async update(id: number, data: object): Promise<void> {
-    await this.knex.table<Post>('table').update(data).where('id', id);
+    await this.knex.table<Post>('post').update(data).where('id', id);
   }
 
   async delete(id: number): Promise<void> {
     await this.knex.table<Post>('post').del().where('id', id);
   }
 
-  async removeUser(email: string, id: number): Promise<void> {
+  async removeUser(userId: number, id: number): Promise<void> {
     await this.knex
       .table('post_users')
       .del()
-      .where('userEmail', email)
+      .where('userId', userId)
       .andWhere('postId', id);
   }
 }

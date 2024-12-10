@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
@@ -15,34 +17,39 @@ import { PostDto } from './dto/post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/post/create-post-multer-options';
 import { UserDto } from 'src/user/dto/user.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('picture', multerOptions))
   async createPost(
     @UploadedFile() file: Express.Multer.File,
+    @Req() req,
     @Body() postDto: PostDto,
   ): Promise<void> {
-    await this.postService.createPost(postDto, file);
+    await this.postService.createPost(postDto, req.user.id, file);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':postId/assign')
   async assignUserToPost(
+    @Req() req,
     @Param('postId') postId: number,
-    @Body() UserDto: UserDto,
+    @Body() userDto: UserDto,
   ): Promise<void> {
-    await this.postService.assignToPost(postId, UserDto.email);
+    await this.postService.assignToPost(req.user.id, postId, userDto.email);
   }
 
-  @Get(':id/:email')
+  @Get(':id/:userId')
   async getPosts(
     @Param('id', ParseIntPipe) id,
-    @Param('email') email: string,
+    @Param('userId') userId: number,
   ): Promise<Record<string, any>> {
-    return await this.postService.getPosts(email, id);
+    return await this.postService.getPosts(userId, id);
   }
 
   @Get(':id')
@@ -50,17 +57,20 @@ export class PostController {
     return await this.postService.getUsers(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updatePost(
+    @Req() req,
     @Param('id', ParseIntPipe) id,
     @Body() postDto: PostDto,
   ): Promise<void> {
-    await this.postService.updatePost(id, postDto);
+    await this.postService.updatePost(req.user.id, id, postDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  deletePost(@Param('id', ParseIntPipe) id): Promise<void> {
-    return this.postService.deletePost(id);
+  deletePost(@Req() req, @Param('id', ParseIntPipe) id): Promise<void> {
+    return this.postService.deletePost(id, req.user);
   }
 
   @Delete(':id/:email')
