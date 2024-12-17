@@ -18,6 +18,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/post/create-post-multer-options';
 import { UserDto } from 'src/user/dto/create-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { User } from 'src/user/user.interface';
+// import { Post as PostInterface } from './post.interface';
 
 @Controller('post')
 export class PostController {
@@ -44,16 +46,16 @@ export class PostController {
     await this.postService.assignToPost(req.user.id, postId, userDto.email);
   }
 
-  @Get(':id/:userId')
+  @Get(':id/:email')
   async findPosts(
     @Param('id', ParseIntPipe) id,
-    @Param('userId') userId: number,
+    @Param('email') email: string,
   ): Promise<Record<string, any>> {
-    return await this.postService.findPosts(userId, id);
+    return await this.postService.findPosts(email, id);
   }
 
   @Get(':id')
-  async findUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
+  async findUsers(@Param('id', ParseIntPipe) id): Promise<User[]> {
     return await this.postService.findUsers(id);
   }
 

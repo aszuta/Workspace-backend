@@ -36,7 +36,7 @@ export class UserService {
     return this.userRepository.findOne(email);
   }
 
-  findOneById(id: number): Promise<Record<string, any>> {
+  findOneById(id: number): Promise<User> {
     return this.userRepository.findById(id);
   }
 }

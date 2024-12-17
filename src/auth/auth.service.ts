@@ -51,7 +51,7 @@ export class AuthService {
     };
   }
 
-  async findByRefreshToken(hash: string): Promise<Record<string, any>> {
+  async findByRefreshToken(hash: string): Promise<Auth> {
     return await this.authRepository.findByRefreshToken(hash);
   }
 

@@ -4,6 +4,7 @@ import { PostDto } from './dto/create-post.dto';
 import { Post } from './post.interface';
 import { UserService } from 'src/user/user.service';
 import { WorkspaceService } from 'src/workspace/workspace.service';
+import { User } from 'src/user/user.interface';
 
 @Injectable()
 export class PostService {
@@ -60,7 +61,7 @@ export class PostService {
     postId: number,
     email: string,
   ): Promise<void> {
-    const isUser = await this.postRepository.findUsers(postId);
+    const isUser = await this.postRepository.findUser(userId, postId);
 
     if (isUser.id !== userId) throw new NotFoundException();
 
@@ -69,14 +70,21 @@ export class PostService {
       postId: postId,
       userId: user.id,
     };
+
     await this.postRepository.assignToPost(data);
   }
 
-  async findPosts(userId: number, id: number): Promise<Post[]> {
-    return await this.postRepository.find(userId, id);
+  async findPosts(email: string, id: number): Promise<Post[]> {
+    const user = await this.userService.findOne(email);
+    const posts = await this.postRepository.findByUser(user.id, id);
+    posts.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+    return posts;
   }
 
-  async findUsers(id: number): Promise<any> {
+  async findUsers(id: number): Promise<User[]> {
     return await this.postRepository.findUsers(id);
   }
 

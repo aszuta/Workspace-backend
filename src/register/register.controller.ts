@@ -7,7 +7,7 @@ export class RegisterController {
   constructor(private readonly registereService: RegisterService) {}
 
   @Post()
-  registerUser(@Body() userDto: UserDto): Promise<any> {
+  registerUser(@Body() userDto: UserDto): Promise<void> {
     return this.registereService.registerUser(userDto);
   }
 }

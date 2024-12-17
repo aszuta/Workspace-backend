@@ -17,14 +17,14 @@ export class UserRepository {
     return this.knex<User>('user').where('email', email).first();
   }
 
-  findByEmail(email: string): Promise<Record<string, any>> {
+  findByEmail(email: string): Promise<User> {
     return this.knex('user')
       .select('id', 'name', 'email')
       .where('email', email)
       .first();
   }
 
-  findById(id: number): Promise<Record<string, any>> {
+  findById(id: number): Promise<User> {
     return this.knex('user').where('id', id).first();
   }
 }

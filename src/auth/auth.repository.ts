@@ -19,14 +19,14 @@ export class AuthRepository {
       .where('id', id);
   }
 
-  findById(id: number): Promise<Record<string, any>> {
+  async findById(id: number): Promise<Auth> {
     return this.knex('auth_credentials')
       .select('password')
       .where('id', id)
       .first();
   }
 
-  findByRefreshToken(hash: string): Promise<Record<string, any>> {
+  async findByRefreshToken(hash: string): Promise<Auth> {
     return this.knex('auth_credentials')
       .select('id')
       .where('refreshToken', hash)

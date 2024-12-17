@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
 import { Post } from './post.interface';
+import { User } from 'src/user/user.interface';
 
 @Injectable()
 export class PostRepository {
   constructor(@InjectKnex() private knex: Knex) {}
 
-  async create(data: object): Promise<any> {
+  async create(data: object): Promise<void> {
     return await this.knex.table<Post>('post').insert(data);
   }
 
@@ -18,8 +19,8 @@ export class PostRepository {
     await this.knex.table('post_picture').insert(data);
   }
 
-  async find(userId: number, id: number): Promise<Post[]> {
-    return await this.knex
+  async findByUser(userId: number, id: number): Promise<Post[]> {
+    return this.knex
       .table('post')
       .join('post_users', 'post.id', 'post_users.postId')
       .join('user', 'post_users.userId', 'user.id')
@@ -29,7 +30,7 @@ export class PostRepository {
   }
 
   async findPost(id: number, userId: number): Promise<boolean> {
-    const result = await this.knex
+    const result = this.knex
       .table<Post>('post')
       .where('id', id)
       .andWhere('createdBy', userId)
@@ -37,8 +38,18 @@ export class PostRepository {
     return !!result;
   }
 
-  async findUsers(id: number): Promise<any> {
-    return await this.knex
+  async findUser(userId: number, postId: number): Promise<User> {
+    return this.knex
+      .table('post_users')
+      .join('user', 'post_users.userId', 'user.id')
+      .where('post_users.postId', postId)
+      .andWhere('post_users.userId', userId)
+      .select('id', 'name', 'email')
+      .first();
+  }
+
+  async findUsers(id: number): Promise<User[]> {
+    return this.knex
       .table('post_users')
       .join('user', 'post_users.userId', 'user.id')
       .where('post_users.postId', id)

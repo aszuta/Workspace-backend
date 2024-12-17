@@ -11,6 +11,8 @@ import {
 import { WorkspaceService } from './workspace.service';
 import { WorkspaceDto } from './dto/create-workspace.dto';
 import { UserDto } from 'src/user/dto/create-user.dto';
+import { User } from 'src/user/user.interface';
+import { Workspace } from './workspace.interface';
 
 @Controller('workspace')
 export class WorkspaceController {
@@ -30,21 +32,17 @@ export class WorkspaceController {
   }
 
   @Get(':name')
-  async findWorkspace(
-    @Param('name') name: string,
-  ): Promise<Record<string, any>> {
+  async findWorkspace(@Param('name') name: string): Promise<Workspace> {
     return await this.workspaceService.findWorkspace(name);
   }
 
   @Get('user/:email')
-  async findWorkspaces(
-    @Param('email') email: string,
-  ): Promise<Record<string, any>> {
+  async findWorkspaces(@Param('email') email: string): Promise<Workspace[]> {
     return await this.workspaceService.findWorkspaces(email);
   }
 
   @Get('users/:id')
-  async findUsers(@Param('id', ParseIntPipe) id): Promise<Record<string, any>> {
+  async findUsers(@Param('id', ParseIntPipe) id): Promise<User[]> {
     return await this.workspaceService.findUsers(id);
   }
 

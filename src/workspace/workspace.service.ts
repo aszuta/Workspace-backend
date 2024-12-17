@@ -3,6 +3,7 @@ import { WorkspaceRepository } from './workspace.repository';
 import { WorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './workspace.interface';
 import { UserService } from 'src/user/user.service';
+import { User } from 'src/user/user.interface';
 
 @Injectable()
 export class WorkspaceService {
@@ -29,7 +30,7 @@ export class WorkspaceService {
     await this.workspaceRepository.assingToWorkspace(data);
   }
 
-  async findWorkspace(name: string): Promise<Workspace[]> {
+  async findWorkspace(name: string): Promise<Workspace> {
     return await this.workspaceRepository.findOne(name);
   }
 
@@ -42,7 +43,7 @@ export class WorkspaceService {
     return await this.workspaceRepository.findUser(workspaceId, userId);
   }
 
-  async findUsers(id: number): Promise<any> {
+  async findUsers(id: number): Promise<User[]> {
     return await this.workspaceRepository.findUsers(id);
   }
 
