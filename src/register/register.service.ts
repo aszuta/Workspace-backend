@@ -7,6 +7,6 @@ export class RegisterService {
   constructor(private readonly userService: UserService) {}
 
   async registerUser(userDto: UserDto): Promise<void> {
-    await this.userService.signIn(userDto);
+    await this.userService.signUp(userDto);
   }
 }
