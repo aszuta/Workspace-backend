@@ -19,7 +19,7 @@ import { multerOptions } from 'src/post/create-post-multer-options';
 import { UserDto } from 'src/user/dto/create-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/user/user.interface';
-// import { Post as PostInterface } from './post.interface';
+import { PostWithPicture } from './post.interface';
 
 @Controller('post')
 export class PostController {
@@ -50,7 +50,7 @@ export class PostController {
   async findPosts(
     @Param('id', ParseIntPipe) id,
     @Param('email') email: string,
-  ): Promise<Record<string, any>> {
+  ): Promise<PostWithPicture[]> {
     return await this.postService.findPosts(email, id);
   }
 
@@ -61,12 +61,14 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('picture', multerOptions))
   async updatePost(
+    @UploadedFile() file: Express.Multer.File,
     @Req() req,
     @Param('id', ParseIntPipe) id,
     @Body() postDto: PostDto,
   ): Promise<void> {
-    await this.postService.updatePost(req.user.id, id, postDto);
+    await this.postService.updatePost(req.user.id, id, postDto, file);
   }
 
   @UseGuards(JwtAuthGuard)

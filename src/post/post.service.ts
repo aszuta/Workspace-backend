@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import { PostDto } from './dto/create-post.dto';
-import { Post } from './post.interface';
 import { UserService } from 'src/user/user.service';
 import { WorkspaceService } from 'src/workspace/workspace.service';
 import { User } from 'src/user/user.interface';
+import { PostWithPicture } from './post.interface';
 
 @Injectable()
 export class PostService {
@@ -74,14 +74,25 @@ export class PostService {
     await this.postRepository.assignToPost(data);
   }
 
-  async findPosts(email: string, id: number): Promise<Post[]> {
+  async findPosts(email: string, id: number): Promise<PostWithPicture[]> {
     const user = await this.userService.findOne(email);
     const posts = await this.postRepository.findByUser(user.id, id);
-    posts.sort(
+
+    const postsWithPictures: PostWithPicture[] = await Promise.all(
+      posts.map(async (post) => {
+        const picture = await this.postRepository.findPostPicture(post.id);
+        return {
+          ...post,
+          picture: picture || {},
+        };
+      }),
+    );
+    postsWithPictures.sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-    return posts;
+
+    return postsWithPictures;
   }
 
   async findUsers(id: number): Promise<User[]> {
@@ -92,7 +103,10 @@ export class PostService {
     userId: number,
     id: number,
     postDto: PostDto,
+    file?: any,
   ): Promise<void> {
+    let path: string | undefined;
+
     const isUser = await this.workspaceService.findUser(
       postDto.workspaceId,
       userId,
@@ -100,7 +114,26 @@ export class PostService {
 
     if (!isUser) throw new NotFoundException();
 
-    await this.postRepository.update(id, postDto);
+    const postData = {
+      title: postDto.title,
+      description: postDto.description,
+      createdBy: postDto.createdBy,
+      workspaceId: postDto.workspaceId,
+    };
+
+    await this.postRepository.update(id, postData);
+
+    if (file) {
+      path = file.path.replace(/\\/g, '/');
+      const fileData = {
+        filename: file.filename,
+        filepath: path,
+        mimetype: file.mimetype,
+        postId: id,
+      };
+
+      await this.postRepository.addPicture(fileData);
+    }
   }
 
   async deletePost(id: number, userId: number): Promise<void> {

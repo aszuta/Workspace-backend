@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { Post } from './post.interface';
+import { Post, PostWithPicture } from './post.interface';
 import { User } from 'src/user/user.interface';
 
 @Injectable()
@@ -27,6 +27,13 @@ export class PostRepository {
       .where('post_users.userId', userId)
       .andWhere('post.workspaceId', id)
       .select('post.*', 'post_users.*', 'user.name');
+  }
+
+  async findPostPicture(postId: number): Promise<PostWithPicture[]> {
+    return await this.knex
+      .table('post_picture')
+      .where('post_picture.postId', postId)
+      .first();
   }
 
   async findPost(id: number, userId: number): Promise<boolean> {
@@ -59,6 +66,10 @@ export class PostRepository {
 
   async update(id: number, data: object): Promise<void> {
     await this.knex.table<Post>('post').update(data).where('id', id);
+  }
+
+  async updatePicture(data: object): Promise<void> {
+    await this.knex.table('post_picture').update(data);
   }
 
   async delete(id: number): Promise<void> {

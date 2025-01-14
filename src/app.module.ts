@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandshakeController } from './handshake/handshake.controller';
 import { RegisterModule } from './register/register.module';
 import configuration from './config/configuration';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -20,6 +22,10 @@ import configuration from './config/configuration';
         config: configService.get('database'),
       }),
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '../public'),
+      serveRoot: '/public/',
     }),
     UserModule,
     PostModule,
