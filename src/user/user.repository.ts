@@ -13,7 +13,7 @@ export class UserRepository {
     });
   }
 
-  findOne(email: string): Promise<User> {
+  findOne(email: string): Promise<User | null> {
     return this.knex<User>('user').where('email', email).first();
   }
 

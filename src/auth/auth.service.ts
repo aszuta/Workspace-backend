@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { UserLoginDto } from 'src/user/dto/create-user.dto';
@@ -22,13 +27,17 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findOne(email);
+    if (!user)
+      throw new UnauthorizedException(
+        'Użytkownik z podanym e-mailem nie istnieje.',
+      );
+
     const userPassword = await this.authRepository.findById(user.id);
+    const isValid = await bcrypt.compare(password, userPassword.password);
+    if (!isValid)
+      throw new UnauthorizedException('Niepoprawny adres e-mail lub hasło.');
 
-    if (user && bcrypt.compare(userPassword.password, password)) {
-      return user;
-    }
-
-    return null;
+    return user;
   }
 
   setAccessToken(id: number): string {
