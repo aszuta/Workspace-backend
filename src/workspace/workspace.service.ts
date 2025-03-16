@@ -51,8 +51,8 @@ export class WorkspaceService {
     await this.workspaceRepository.update(id, data);
   }
 
-  async deleteWorkspace(id: number): Promise<void> {
-    await this.workspaceRepository.delete(id);
+  async deleteWorkspace(workspaceId: number, id: number): Promise<void> {
+    await this.workspaceRepository.delete(workspaceId, id);
   }
 
   async removeUser(email: string, id: number): Promise<void> {

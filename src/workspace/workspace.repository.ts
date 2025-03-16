@@ -51,8 +51,12 @@ export class WorkspaceRepository {
       .where('owner', id);
   }
 
-  async delete(id: number): Promise<void> {
-    await this.knex.table('workspace').del().where('owner', id);
+  async delete(workspaceId: number, id: number): Promise<void> {
+    await this.knex
+      .table('workspace')
+      .del()
+      .where('id', workspaceId)
+      .andWhere('owner', id);
   }
 
   async removeUser(userId: number, id: number): Promise<void> {

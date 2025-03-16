@@ -68,8 +68,8 @@ export class PostRepository {
     await this.knex.table<Post>('post').update(data).where('id', id);
   }
 
-  async updatePicture(data: object): Promise<void> {
-    await this.knex.table('post_picture').update(data);
+  async updatePicture(id: number, data: object): Promise<void> {
+    await this.knex.table('post_picture').update(data).where('postId', id);
   }
 
   async delete(id: number): Promise<void> {
