@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import { PostDto } from './dto/create-post.dto';
 import { UserService } from 'src/user/user.service';
@@ -66,6 +70,11 @@ export class PostService {
     if (isUser.id !== userId) throw new NotFoundException();
 
     const user = await this.userService.findOne(email);
+    if (!user)
+      throw new ConflictException(
+        'Nie znaleziono użytkownika z podanym adresem e-mail.',
+      );
+
     const data = {
       postId: postId,
       userId: user.id,
@@ -132,7 +141,7 @@ export class PostService {
         postId: id,
       };
 
-      await this.postRepository.addPicture(fileData);
+      await this.postRepository.updatePicture(id, fileData);
     }
   }
 

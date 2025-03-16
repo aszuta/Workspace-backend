@@ -7,12 +7,15 @@ import {
   ParseIntPipe,
   Post,
   Patch,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 import { WorkspaceDto } from './dto/create-workspace.dto';
 import { UserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/user.interface';
 import { Workspace } from './workspace.interface';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('workspace')
 export class WorkspaceController {
@@ -54,9 +57,10 @@ export class WorkspaceController {
     await this.workspaceService.updateWorkspace(id, workspaceDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  deleteWorkspace(@Param('id', ParseIntPipe) id): Promise<void> {
-    return this.workspaceService.deleteWorkspace(id);
+  deleteWorkspace(@Req() req, @Param('id', ParseIntPipe) id): Promise<void> {
+    return this.workspaceService.deleteWorkspace(id, req.user.id);
   }
 
   @Delete(':id/:email')
